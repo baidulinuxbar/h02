@@ -2,6 +2,7 @@
  *real model const define
  *Copyright (C) 2020-2022 tybitsfox
  */
+_LOAD_FROM_HDD	=	1
 BOOTSEG			=	0x7c0				#引导代码默认的加载段地址
 BOOTADDR		=	0x7c00				#boot代码的加载地址
 HEADADDR		=	0x8000				#head代码的加载地址

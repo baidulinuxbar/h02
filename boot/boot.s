@@ -1,3 +1,4 @@
+.code16
 .include "const16.s"
 .text
 	jmp $BOOTSEG,$go
@@ -43,7 +44,7 @@ go:
 	smsw %ax
 	or $1,%ax
 	lmsw %ax
-	jmp $8,$0
+	jmp $8,$0x8000
 
 stk:	.word	STK_OFF,STK_SEG,0
 _cursor_pos:	.word	0
@@ -421,8 +422,8 @@ len=.-msg
 l_gdt:	.word	47
 		.long	BOOTADDR+gdt
 gdt:	.word	0,0,0,0
-		.word	0x7ff,HEADADDR,0x9a00,0x00c0			#0x8	text
-		.word	0x7ff,HEADADDR,0x9200,0x00c0			#0x10	data
+		.word	0x7ff,0,0x9a00,0x00c0			#0x8	text
+		.word	0x7ff,0,0x9200,0x00c0			#0x10	data
 		.space	24,0
 .org	1020
 .ascii	"tian"
