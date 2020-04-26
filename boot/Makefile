@@ -15,5 +15,5 @@ all:$(ELF_FILE)
 	as -o $@ $< -I$(HDIR)
 .PHONY:	clean
 clean:
-	rm *.elf
+	-rm *.elf
 
