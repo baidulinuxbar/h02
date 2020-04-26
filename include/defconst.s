@@ -4,6 +4,7 @@
  */
 _LOAD_FROM_HDD	=	1
 .ifndef		PROTECT_MODE 
+//{{{ real model defined
 BOOTSEG			=	0x7c0				#引导代码默认的加载段地址
 BOOTADDR		=	0x7c00				#boot代码的加载地址
 HEADADDR		=	0x8000				#head代码的加载地址
@@ -30,25 +31,31 @@ OCW1_MASK		=	0xff				#ocw1命令：中断屏蔽
 OCW1_UNMASK		=	0					#ocw1命令：中断非屏蔽
 OCW2			=	0x20				#ocw2命令：非自动结束方式，发送EIO通知中断处理完成
 #==============end of 8259a set
-LOAD_SECT_CNT	=	17
-SAFE_BUFF		=	0x2400				#18*512,seg=0x7c0
+//}}}
 .else
 //{{{segment selector define
 KS_CS			=	8
 KS_DS			=	0x10
-KS_LDT0			=	0x18
-KS_TSS0			=	0x20
-KS_LDT1			=	0x28
-KS_TSS1			=	0x30
-KS_LDT2			=	0x38
-KS_TSS2			=	0x40
-KS_SS			=	0x48
+KS_SS			=	0x18
+KS_LDT0			=	0x20
+KS_TSS0			=	0x28
+KS_KSS0			=	0x30
+KS_LDT1			=	0x38
+KS_TSS1			=	0x40
+KS_KSS1			=	0x48
+KS_LDT2			=	0x50
+KS_TSS2			=	0x58
+KS_KSS2			=	0x60
 
 TS_CS			=	0xf
 TS_DS			=	0x17
+TS_SS			=	0x1f
+
+
 
 SS_STACK		=	0xffff			#stack size:16*4k
-SAFE_BUFF		=	0x60000			#18*512,seg=0x7c0
+DISP_BUFF		=	0xb8000
+#SAFE_BUFF		=	0x60000			#18*512,seg=0x7c0
 //}}}
 .endif
 STK_OFF			=	0x3ff				#实模式下堆栈指针sp的初始化位置
@@ -58,8 +65,12 @@ MEM_REQUEST		=	0x800000			#运行最小内存要求，8M
 .ifdef	_LOAD_FROM_HDD
 LOAD_DRV		=	0x80
 MAX_SECT_CNT	=	64					#1-base 63+1
+LOAD_SECT_CNT	=	33
+SAFE_BUFF		=	0x4000				#18*512,seg=0x7c0
 .else
 LOAD_DRV		=	0
 MAX_SECT_CNT	=	19
+LOAD_SECT_CNT	=	17
+SAFE_BUFF		=	0x2400				#18*512,seg=0x7c0
 .endif
 

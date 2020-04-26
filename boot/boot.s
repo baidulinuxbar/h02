@@ -424,7 +424,8 @@ l_gdt:	.word	47
 gdt:	.word	0,0,0,0
 		.word	0x7ff,0,0x9a00,0x00c0			#0x8	text
 		.word	0x7ff,0,0x9200,0x00c0			#0x10	data
-		.space	24,0
+		.word	0xff,0,0x9270,0x00c0			#0x18	stack
+		.space	16,0
 .org	1020
 .ascii	"tian"
 
