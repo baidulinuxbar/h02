@@ -1,5 +1,5 @@
 .code16
-.include "const16.s"
+.include "defconst.s"
 .text
 	jmp $BOOTSEG,$go
 go:

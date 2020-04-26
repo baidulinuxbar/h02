@@ -1,3 +1,5 @@
+PROTECT_MODR	=	1
+.include "defconst.s"
 .text
 	movl $0x10,%eax
 	movw %ax,%ds
