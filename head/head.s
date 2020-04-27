@@ -1,3 +1,7 @@
+/*toys
+ *head：main-head file
+ *Copyright (C) 2020-2022 tybitsfox
+ */
 PROTECT_MODE	=	1
 .include "defconst.s"
 .text
@@ -8,16 +12,12 @@ PROTECT_MODE	=	1
 	call cls
 	jmp .
 .include "funcs/foth.s"
-.align 2
-stk:	.long	ESP_LEN,KS_SS
-_lcount:		.long	0
-_flp_flag:		.long	0
-bios:			.space	12,0
-hd_bios:		.space	16,0
-pmem_size:		.long	0
-_cursor_pos:	.long	0
-				.long	0				#for safe
-.align 2
+.include "funcs/fint.s"
+.include "../driver/hdd/hdd_func.s"
+.include "../driver/flp/flp_func.s"
+.include "../driver/hdd/hdd_var.s"
+.include "../driver/flp/flp_var.s"
+.include "funcs/fvar.s"
 
 .org	SAFE_BUFF-4
 .ascii	"yong"

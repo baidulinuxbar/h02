@@ -141,9 +141,9 @@ delay:
 	pushl %ebp
 	movl %esp,%ebp
 	movl 8(%ebp),%eax
-	cmpl $0xff,%ax
+	cmpl $0xff,%eax
 	ja 1f
-	andl $0xff,%ax
+	andl $0xff,%eax
 	int $0x80
 1:
 	movl %ebp,%esp

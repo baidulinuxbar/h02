@@ -80,17 +80,17 @@ HEAD_OFF		=	0				#GDT addr
 FS_LEN			=	0xff
 FS_OFF			=	0x300000
 #任务0的运行空间
-TASK0_LEN		=	0x3f
+TASK0_LEN		=	0xbf
 TASK0_OFF		=	0x400000
-TASK0_SS_OFF	=	0X440000
+TASK0_SS_OFF	=	0X4C0000
 #任务1的运行空间
 TASK1_LEN		=	0x3f
-TASK1_OFF		=	0x450000
-TASK1_SS_OFF	=	0x490000
+TASK1_OFF		=	0x500000
+TASK1_SS_OFF	=	0x540000
 #任务2的运行空间
 TASK2_LEN		=	0x3f
-TASK2_OFF		=	0x4a0000
-TASK2_SS_OFF	=	0x4e0000
+TASK2_OFF		=	0x580000
+TASK2_SS_OFF	=	0x5c0000
 #下面的关于堆栈的设置都是基于8M最低内存要求的
 KSS_SYS_OFF		=	0x700000		#内核堆栈段起始地址
 KSS_USR_OFF		=	0x740000		#任务内核堆栈段起始地址
@@ -101,6 +101,8 @@ TASK_ENTRY		=	0				#每个任务的入口地址
 ESP_LEN			=	0x3ffff			#for stack
 KSS_LEN			=	0x3f			#for GDT 256K
 DISP_BUFF		=	0xb8000
+MEM_GRAN		=	1				#GDT G bit
+MEM_REQUEST		=	0x800000		#要求最小内存8M
 #SAFE_BUFF		=	0x60000			#18*512,seg=0x7c0
 //{{{Segment Type Define
 STEXT		=	0x9a					#系统代码段类型字
