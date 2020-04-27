@@ -9,7 +9,7 @@ PROTECT_MODE	=	1
 	jmp .
 .include "funcs/foth.s"
 .align 2
-stk:	.long	SS_STACK,KS_SS
+stk:	.long	ESP_LEN,KS_SS
 _lcount:		.long	0
 _flp_flag:		.long	0
 bios:			.space	12,0
