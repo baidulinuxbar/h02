@@ -59,7 +59,11 @@ tss0:	.long	0,ESP_LEN,KS_KSS0,0,0,0,0		#link,esp0,ss0,esp12,ss12
 		.long	0,0,0,0,ESP_LEN,0,0,0			#8 normal registers
 		.long	0x17,0xf,0x1f,0x17,0x17,0x17	#6 segment registers
 		.long	KS_LDT0,0						#ldt,io-map
-
+.align 4
+err_01:	.ascii	"hdd parameters error"
+e01_len=.-err_01
+err_02:	.ascii	"init error"
+e02_len=.-err_02
 
 
 

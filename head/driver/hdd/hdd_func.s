@@ -41,14 +41,18 @@ setup_hdd_para:
 	movl $KS_DS,%eax
 	movw %ax,%ds
 	movl 8(%ebp),%eax
-	addb %ah,%al
-	jc 1f
-	cmpb $MAX_SECT_CNT,%al
-	jbe 2f
-	movl $0xaa00bb,%eax
-	jmp .
+	movb $MAX_SECT_CNT,%bl
+	decb %bl
+	cmpb %bl,%ah
+	ja 1f
+	cmpb %bl,%al
+	ja 1f
+	jmp 2f
 1:
-	movl $0xaabbcc,%eax
+	leal err_01,%eax
+	pushl %eax
+	pushl $e01_len
+	call show_msg
 	jmp .
 2:	
 	movl 8(%ebp),%eax
@@ -56,18 +60,12 @@ setup_hdd_para:
 	movb %al,hd_csect
 	movl 12(%ebp),%eax
 	cmpw hdd_trk,%ax
-	jb 3f
-	movl $0xff11ee22,%eax
-	jmp .
-3:	
+	jae 1b
 	movb %ah,hd_htrk
 	movb %al,hd_ltrk
 	movl 16(%ebp),%eax
 	cmpb hdd_head,%al
-	jb 4f
-	movl $0x11ff22ee,%eax
-	jmp .
-4:	
+	jae 1b
 	movb %al,hd_head
 	movl %ebp,%esp
 	popl %ebp
