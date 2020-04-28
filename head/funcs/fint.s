@@ -2,14 +2,6 @@
  *head：int functions 
  *Copyright (C) 2020-2022 tybitsfox
  */
-//{{{copy_bios	将保存的软驱参数和物理内存拷贝至新位置
-copy_bios:
-	leal bios,%edi
-	movl $0x50400,%esi
-	movl $36,%ecx
-	rep movsb
-	ret
-//}}}
 //{{{nor_int	通用中断处理程序
 nor_int:
 	pusha
@@ -329,55 +321,6 @@ setup_idt:
 	pop %ds
 	ret
 //}}}
-
-//{{{setup_ldt	ldt的安装函数
-/*将ldt0和ldt1拷贝至指定位置
-  已经连续两次在ldt的加载时出错了，出错的原因也都一样，好好检查GDT和LDT，看是否漏掉一个word!!!
- */	
-setup_ldt:
-	push %ds
-	push %es
-	movl $KS_DS,%eax
-	movw %ax,%ds
-	movl $KS_DS,%eax
-	movw %ax,%es
-	movl $0,%eax
-	movl $LDT_OFF,%edi
-	movl $0x120,%ecx		#48*6=0x120
-	rep stosw				#clear ldt0,ldt1
-	movl $LDT_OFF,%edi
-	subl $8,%edi			#adjust position
-	leal ldt_lnk,%esi
-	movl $3,%ecx			#3ldts 4 seg description peer ldt
-1:	
-	pushl %ecx
-	addl $16,%edi
-	movl $4,%ecx
-2:
-	lodsl
-	pushl %eax
-	lodsl
-	pushl %eax
-	lodsl
-	pushl %eax
-	lodsl
-	pushl %eax
-	call crt_gdt_seg
-	stosl
-	xchgl %eax,%edx
-	stosl					#ldt1 text	0xf
-	addl $16,%esp
-	loop 2b
-	popl %ecx
-	decl %ecx
-	cmpl $0,%ecx
-	ja  1b
-	pop %es
-	pop %ds
-	ret
-//}}}
-
-
 
 
 

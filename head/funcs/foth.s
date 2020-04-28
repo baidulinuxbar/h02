@@ -214,11 +214,159 @@ dump_mem:
 	popl %ebp
 	ret
 //}}}
+//{{{copy_bios	将保存的软驱参数和物理内存拷贝至新位置
+copy_bios:
+	leal bios,%edi
+	movl $0x50400,%esi
+	movl $36,%ecx
+	rep movsb
+	ret
+//}}}
+//{{{setup_ldt	ldt的安装函数
+/*将ldt0和ldt1拷贝至指定位置
+  已经连续两次在ldt的加载时出错了，出错的原因也都一样，好好检查GDT和LDT，看是否漏掉一个word!!!
+ */	
+setup_ldt:
+	push %ds
+	push %es
+	movl $KS_DS,%eax
+	movw %ax,%ds
+	movl $KS_DS,%eax
+	movw %ax,%es
+	movl $0,%eax
+	movl $LDT_OFF,%edi
+	movl $0x120,%ecx		#48*6=0x120
+	rep stosw				#clear ldt0,ldt1
+	movl $LDT_OFF,%edi
+	subl $8,%edi			#adjust position
+	leal ldt_lnk,%esi
+	movl $3,%ecx			#3ldts 4 seg description peer ldt
+1:	
+	pushl %ecx
+	addl $16,%edi
+	movl $4,%ecx
+2:
+	lodsl
+	pushl %eax
+	lodsl
+	pushl %eax
+	lodsl
+	pushl %eax
+	lodsl
+	pushl %eax
+	call crt_gdt_seg
+	stosl
+	xchgl %eax,%edx
+	stosl					#ldt1 text	0xf
+	addl $16,%esp
+	loop 2b
+	popl %ecx
+	decl %ecx
+	cmpl $0,%ecx
+	ja  1b
+	pop %es
+	pop %ds
+	ret
+//}}}
+//{{{setup_tss	tss的安装函数
+/*将tss0和tss1拷贝至指定位置*/	
+setup_tss:
+	push %ds
+	push %es
+	movl $KS_DS,%eax
+	movw %ax,%ds
+	movw %ax,%es
+	leal tss0,%ebx
+	leal tss_lnk,%esi
+	movl $3,%ecx
+1:
+	pushl %ecx
+	lodsl
+	movl %eax,%edi
+	lodsl
+	movl %eax,8(%ebx)	#系统级堆栈
+	lodsl
+	movl %eax,28(%ebx)	#pdt
+	lodsl
+	movl %eax,96(%ebx)	#ldt
+	pushl %esi
+	movl %ebx,%esi
+	movl $104,%ecx
+	rep movsb
+	popl %esi
+	popl %ecx
+	loop 1b
 
-
-
-
-
+	pop %es
+	pop %ds
+	ret
+//}}}	
+//{{{setup_pdt
+/*安装页目录和页表*/	
+setup_pdt:
+	push %ds
+	push %es
+	movl $KS_DS,%eax
+	movw %ax,%ds
+	movw %ax,%es
+	movl $PDT_OFF,%edi
+	movl $0x400,%ecx
+	movl $0,%eax
+	rep stosl				#clear
+	movl $4,%ecx
+	movl $PDT_OFF,%edi
+	movl $PT_SYS_OFF,%eax
+	addl $7,%eax
+1:
+	stosl
+	addl $PDT_LEN,%eax
+	loop 1b				#安装页目录
+	movl $PT_SYS_OFF,%edi
+	movl $7,%eax
+	movl $0x1000,%ecx
+2:
+	stosl
+	addl $PDT_LEN,%eax
+	loop 2b				#安装完4个页表，可映射16M
+	pop %es
+	pop %ds
+	ret
+//}}}
+//{{{reset_gdt 安装新的GDT
+reset_gdt:
+	push %ds
+	push %es
+	movl $KS_DS,%eax
+	movw %ax,%ds
+	movw %ax,%es
+	movl $GDT_OFF,%edi
+	movl $GDT_LEN,%ecx
+	incl %ecx
+	movl $0,%eax
+	rep stosb
+	movl $GDT_OFF,%edi
+	addl $8,%edi			#zero for first 8 bytes
+	leal gdt_lnk,%esi
+	movl $12,%ecx
+1:	
+	lodsl
+	pushl %eax
+	lodsl
+	pushl %eax
+	lodsl
+	pushl %eax
+	lodsl
+	pushl %eax
+	call crt_gdt_seg
+	stosl
+	xchgl %eax,%edx
+	stosl
+	addl $16,%esp
+	loop 1b
+	pop %es
+	pop %ds
+	ret
+//}}}
 
 
 

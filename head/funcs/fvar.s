@@ -31,6 +31,7 @@ gdt_lnk:	#same as above
 	.long	MEM_GRAN,STEXT,HEAD_LEN,HEAD_OFF	#text	0x8
 	.long	MEM_GRAN,SDATA,HEAD_LEN,HEAD_OFF	#data	0x10
 	.long	MEM_GRAN,SDATA,KSS_LEN,KSS_SYS_OFF	#stack	0x18
+
 	.long	0,SLDT,LDT0_LEN,LDT_OFF				#ldt0	0x20
 	.long	0,STSS,TSS0_LEN,TSS_OFF				#tss0	0x28
 	.long	MEM_GRAN,SDATA,KSS_LEN,KSS_USR_OFF	#sstack0	0x30
