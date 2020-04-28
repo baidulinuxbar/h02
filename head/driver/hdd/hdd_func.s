@@ -158,6 +158,7 @@ dispatch_hdd_cmd:
 	movb hd_cmd,%al			#command
 	movl $HD_PORT_COMMAND,%edx
 	outb %al,%dx
+	clc
 9:
 	movl %ebp,%esp
 	popl %ebp
@@ -183,7 +184,7 @@ hdd_check_stat:
 	jmp .+2
 	testb $HD_STAT_BUSY,%al
 	jz 2f
-	movl $5,%eax
+	pushl $5
 	call delay
 	loop 1b
 	stc
@@ -193,7 +194,7 @@ hdd_check_stat:
 	jmp .+2
 	testb $HD_STAT_READY,%al
 	jnz 3f
-	movl $5,%eax
+	pushl $5
 	call delay
 	loop 2b
 	stc

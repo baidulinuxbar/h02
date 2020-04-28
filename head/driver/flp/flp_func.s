@@ -125,7 +125,7 @@ wait_for_irq:
 1:
 	cmpl $1,_flp_flag
 	je 2f
-	movl $8,%eax
+	pushl $8
 	call delay
 	loop 1b
 	stc
@@ -266,7 +266,7 @@ motor_on:
 1:
 	movl $FDC_PORT_DOR,%edx
 	outb %al,%dx
-	movl $50,%eax
+	pushl $50
 	call delay
 	ret
 //}}}
@@ -279,7 +279,7 @@ motor_off:
 	movl $4,%eax		#only set reset bit
 	movl $FDC_PORT_DOR,%edx
 	outb %al,%dx
-	movl $50,%eax
+	pushl $50
 	call delay
 	ret
 //}}}	
@@ -668,7 +668,7 @@ fdc_send:
 	jmp .+2
 	testb $0x80,%al
 	jnz 2f
-	movl $5,%eax
+	pushl $5
 	call delay
 	loop 1b
 	stc
@@ -706,7 +706,7 @@ fdc_recv:
 	jmp .+2
 	testb $0x10,%al
 	jnz 2f
-	movl $5,%eax
+	pushl $5
 	call delay
 	loop 1b
 	jmp 3f

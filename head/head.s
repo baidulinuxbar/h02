@@ -49,12 +49,32 @@ PROTECT_MODE	=	1
 	call delay
 	movl _lcount,%ebx
 	call init_hdd_para
+	pushl $1
 	pushl $0
-	pushl $0
-	pushl $0x30f0	
+	pushl $0x0120	
 	call setup_hdd_para
 	movl %ebp,%esp
-
+	pushl $HD_CMD_READ
+	call dispatch_hdd_cmd
+	jnc 3f
+	leal err_02,%eax
+	pushl %eax
+	pushl $e02_len
+	call show_msg
+	jmp .
+3:	
+	movl %ebp,%esp
+	pushl $10
+	call delay
+	movl $SAFE_BUFF,%esi
+	movl $0x200000,%edi
+	movl $1024,%ecx
+	rep movsw
+	pushl $0x200000
+	pushl $KS_DS
+	call dump_mem
+	jmp $KS_CS,$0x200000
+	xorl %eax,%eax
 	jmp .
 .include "funcs/foth.s"
 .include "funcs/fint.s"
