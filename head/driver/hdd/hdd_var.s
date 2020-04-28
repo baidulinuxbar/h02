@@ -85,7 +85,7 @@ hdd_sect_peer_trk:	.byte	0
 //{{{----------------param for running--------------
 hd_drv:		.byte 0		#启动器号
 hd_head:	.byte 0		#磁头号
-hd_bsect:	.byte 0		#起始扇区号
+hd_bsect:	.byte 35	#起始扇区号
 hd_csect:	.byte 0		#扇区数
 hd_htrk:	.byte 0		#柱面高字节
 hd_ltrk:	.byte 0		#柱面低字节

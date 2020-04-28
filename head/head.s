@@ -48,7 +48,13 @@ PROTECT_MODE	=	1
 	pushl $0x20
 	call delay
 	movl _lcount,%ebx
+	call init_hdd_para
+	pushl $0
+	pushl $0
+	pushl $0x30f0	
+	call setup_hdd_para
 	movl %ebp,%esp
+
 	jmp .
 .include "funcs/foth.s"
 .include "funcs/fint.s"

@@ -1,18 +1,12 @@
-/*硬盘驱动
-测试用的硬盘设置为：20cylinder,64sector,16head,total 9.9M
- 
-Author:tybitsfox
-2020-4-17
+/*toys
+ *hard disk driver,
+ *normal set is: 20cylinder,64sector,16head,total 9.9M
+ *Copyright (C) 2020-2022 tybitsfox
  */
 //{{{init_hdd_para	参数初始化函数
-/*传入参数：驱动器号，磁头号，起始扇区号，扇区数，柱面号，缓冲区地址
-  传入方式：堆栈
-  			20(%ebp): 缓冲区地址
-			16(%ebp): hi驱动器号，lo磁头号
-			12(%ebp): hi起始扇区号，lo扇区数
-			8(%ebp) : 柱面号
-
-  返回值：CF cf=1 error,cf=0 success
+/*传入参数：无
+ *注意：目前暂不支持主硬盘之外的硬盘操作
+  返回值：无
  */
 init_hdd_para:
 	pushl %ebp
@@ -26,39 +20,61 @@ init_hdd_para:
 	leal hdd_trk,%edi
 	movl $16,%ecx
 	rep movsb
+	movl $SAFE_BUFF,%eax
+	movl %eax,hd_data_buf
 	pop %es
 	pop %ds
-	movl 8(%ebp),%eax
-	cmpw hdd_trk,%ax
-	jae 1f
-	movb %al,hd_ltrk
-	movb %ah,hd_htrk
-	movl 12(%ebp),%eax
-	addb %ah,%al
-	decb %al
-	cmpb hdd_sect_peer_trk,%al
-	ja 1f
-	movl 12(%ebp),%eax
-	movb %ah,hd_bsect
-	movb %al,hd_csect
-	movl 16(%ebp),%eax
-	cmpb $1,%ah				#onle support master & slave hdd:0,1
-	ja 1f
-	cmpb hdd_head,%al
-	ja 1f
-	movb %ah,hd_drv
-	movb %al,hd_head
-	movl 20(%ebp),%eax
-	movl %eax,hd_data_buf
-	clc
-	jmp 2f
-1:
-	stc
-2:
 	movl %ebp,%esp
 	popl %ebp
 	ret
 //}}}
+//{{{setup_hdd_para 参数设置函数
+/*传入参数：磁头号、柱面号、起始扇区号、读写的扇区数
+ *传入方式：堆栈：
+ 		16(%ebp)	磁头号
+		12(%ebp)	柱面号
+		8(%ebp)	lwhi 起始扇区号（1-base），lwlo 读写的扇区数
+ */
+setup_hdd_para:
+	pushl %ebp
+	movl %esp,%ebp
+	movl $KS_DS,%eax
+	movw %ax,%ds
+	movl 8(%ebp),%eax
+	addb %ah,%al
+	jc 1f
+	cmpb $MAX_SECT_CNT,%al
+	jbe 2f
+	movl $0xaa00bb,%eax
+	jmp .
+1:
+	movl $0xaabbcc,%eax
+	jmp .
+2:	
+	movl 8(%ebp),%eax
+	movb %ah,hd_bsect
+	movb %al,hd_csect
+	movl 12(%ebp),%eax
+	cmpw hdd_trk,%ax
+	jb 3f
+	movl $0xff11ee22,%eax
+	jmp .
+3:	
+	movb %ah,hd_htrk
+	movb %al,hd_ltrk
+	movl 16(%ebp),%eax
+	cmpb hdd_head,%al
+	jb 4f
+	movl $0x11ff22ee,%eax
+	jmp .
+4:	
+	movb %al,hd_head
+	movl %ebp,%esp
+	popl %ebp
+	ret
+//}}}
+
+
 //{{{dispatch_hdd_cmd	硬盘控制器命令执行函数
 /*传入参数：依据参数表,命令字节通过堆栈
   			8(%ebp): 控制命令字
