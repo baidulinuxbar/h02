@@ -16,15 +16,13 @@ SAFE_CHANGED	=	1
 	movl $SAFE_BUFF,%eax
 	movl %eax,%ebx
 	jmp .
-
-stk:	.long ESP_LEN,KS_SS	
-#.include "funcs/foth.s"
-#.include "funcs/fint.s"
-#.include "driver/hdd/hdd_func.s"
-#.include "driver/flp/flp_func.s"
+.include "funcs/foth.s"
+.include "funcs/fint.s"
+.include "driver/hdd/hdd_func.s"
+.include "driver/flp/flp_func.s"
 .include "driver/hdd/hdd_var.s"
 .include "driver/flp/flp_var.s"
-#.include "funcs/fvar.s"
+.include "funcs/fvar.s"
 
 
 #63*512=32256

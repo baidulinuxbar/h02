@@ -68,7 +68,7 @@ PROTECT_MODE	=	1
 	call delay
 	movl $SAFE_BUFF,%esi
 	movl $0x200000,%edi
-	movl $1024,%ecx
+	movl $0x4000,%ecx
 	rep movsw
 	pushl $0x200000
 	pushl $KS_DS
