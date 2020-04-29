@@ -57,7 +57,7 @@ GDT_LEN			=	0x67			#13 *8= 0x68
 GDT_OFF			=	0x1000
 LDT_LEN			=	0x30			#安装所用，16位对齐 48*6=0x120
 LDT_OFF			=	0x2000			
-LDT0_LEN		=	0x27
+LDT0_LEN		=	0x1f
 TSS_LEN			=	112				#安装所用，16位对齐 112*6=0x2a0
 TSS_OFF			=	0x3000
 TSS0_LEN		=	0x67			#103

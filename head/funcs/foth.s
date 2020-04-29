@@ -238,13 +238,13 @@ setup_ldt:
 	movl $0x120,%ecx		#48*6=0x120
 	rep stosw				#clear ldt0,ldt1
 	movl $LDT_OFF,%edi
-	subl $8,%edi			#adjust position
+	subl $16,%edi			#adjust position
 	leal ldt_lnk,%esi
 	movl $3,%ecx			#3ldts 4 seg description peer ldt
 1:	
 	pushl %ecx
-	addl $16,%edi
-	movl $4,%ecx
+	addl $24,%edi
+	movl $3,%ecx
 2:
 	lodsl
 	pushl %eax
