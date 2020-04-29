@@ -127,7 +127,11 @@ MEM_REQUEST		=	0x800000			#运行最小内存要求，8M
 LOAD_DRV		=	0x80
 MAX_SECT_CNT	=	64					#1-base 63+1
 LOAD_SECT_CNT	=	33
-SAFE_BUFF		=	0xC000				#seg=0x7c0 (33+1)*512=0xc000
+.ifdef SAFE_CHANGED
+	SAFE_BUFF		=	0x600000			#6M begin, rang 1M
+.else
+	SAFE_BUFF		=	0xC000				#seg=0x7c0 (33+1)*512=0xc000
+.endif
 .else
 LOAD_DRV		=	0
 MAX_SECT_CNT	=	19
