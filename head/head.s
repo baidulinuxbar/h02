@@ -73,6 +73,7 @@ PROTECT_MODE	=	1
 	pushl $0x200000
 	pushl $KS_DS
 	call dump_mem
+	leal _lcount,%esi
 	jmp $KS_CS,$0x200000
 	xorl %eax,%eax
 	jmp .

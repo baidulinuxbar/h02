@@ -13,8 +13,11 @@ SAFE_CHANGED	=	1
 	movw %ax,%fs
 	movw %ax,%gs
 	lss stk,%esp
+	movl %esp,%ebp
 	movl $SAFE_BUFF,%eax
 	movl %eax,%ebx
+	pushl %esi
+	call init_kd
 	jmp .
 .include "funcs/foth.s"
 .include "funcs/fint.s"
@@ -24,9 +27,10 @@ SAFE_CHANGED	=	1
 .include "driver/flp/flp_var.s"
 .include "funcs/fvar.s"
 
-
+aa:	.long 0
+.space	16,0
 #63*512=32256
-.org	32252
-.ascii	"ttyy"
+#.org	32252
+#.ascii	"ttyy"
 
 
