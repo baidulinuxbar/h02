@@ -18,17 +18,12 @@ SAFE_CHANGED	=	1
 	movl %eax,%ebx
 	pushl %esi
 	call init_kd
+	call _in_main
 	jmp .
-.include "funcs/foth.s"
-.include "funcs/fint.s"
-.include "driver/hdd/hdd_func.s"
-.include "driver/flp/flp_func.s"
-.include "driver/hdd/hdd_var.s"
-.include "driver/flp/flp_var.s"
-.include "funcs/fvar.s"
+.data
+.align 2
+stk:			.long	ESP_LEN,KS_SS
 
-aa:	.long 0
-.space	16,0
 #63*512=32256
 #.org	32252
 #.ascii	"ttyy"
