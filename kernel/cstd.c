@@ -1,4 +1,5 @@
 #include <toys/const_def.h>
+#include <kernel/cstd.h>
 static struct SYS_DATA sd_const ={
 	8,0x10,0x18,0x20,0x38,0x50,
 	0x28,0x40,0x58,0x30,0x48,0x60,
@@ -6,13 +7,6 @@ static struct SYS_DATA sd_const ={
 };
 static struct KERN_DATA	kd;
 char str[]="hello kernel!";
-#define SETCURSOR	__asm__("movl %0,%%eax;andl $0xff,%%eax;movl $80,%%ecx;mulb %%cl;shrl $8,%%ebx;addl %%eax,%%ebx;\n\t" \
-		"movb $0xf,%%al;movw $0x3d4,%%dx;outb %%al,%%dx\n\t" \
-		"movb %%bl,%%al;incw %%dx;outb %%al,%%dx;movb $0xe,%%al;decw %%dx;\n\t"\
-		"outb %%al,%%dx;movb %%bh,%%al;incw %%dx;outb %%al,%%dx\n\t"::"b"(kd.pos):"eax","ecx","edx");
-#define _memcpy(s,d,len)	__asm__("movl %0,%%esi;movl %1,%%edi;rep movsb"::"p"(s),"p"(d),"c"(len):"eax","esi","edi");
-#define _memset(s,i,len)	__asm__("movl %0,%%edi;rep stosb"::"p"(s),"a"(i),"c"(len):"edi");
-#define _strlen(s)		({register int i;__asm__("movl $0x10001,%%ecx;movb $0,%%al;repne scasb;negw %%cx;movl %%ecx,%%eax":"=a"(i):"D"(s):"ecx");i;});
 
 
 //{{{void init_kd(BYTE *p)
@@ -91,13 +85,14 @@ void _printk(char *ch){
 int _in_main(){
 	_printk(str);
 	_printk(str);
-	show_ax(kd.pos);
+	delay(20);
+	show_ax(kd.tcnt);
 	return 0;
 };//}}}
 //{{{int get_cnt()
-int get_cnt(){return kd.pos;};//}}}
+int get_cnt(){return kd.tcnt;};//}}}
 //{{{void set_cnt()
-void set_cnt(){kd.pos++;};//}}}
+void set_cnt(){kd.tcnt++;};//}}}
 
 
 

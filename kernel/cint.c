@@ -30,9 +30,25 @@ void _hd_int(){
 	_printk(ch);
 };//}}}
 //{{{void _sys_int()
-void _sys_int(){
+void _sys_int(int n,int m,int x,int y){
 	char *ch="system called";
-	_printk(ch);
+	char buf[128];
+//	_printk(ch);
+	int i,j,k;
+	i=((n >> 8) & 0xff);
+	if(i == 0)		//delay
+	{	
+		j=get_cnt();
+		j+=(n & 0xff);
+		k=get_cnt();
+		while(j>k)
+			k=get_cnt();
+	}
+	else
+	{
+		_memset(buf,0,sizeof(buf));
+		_printk(ch);
+	}
 };//}}}
 
 	
