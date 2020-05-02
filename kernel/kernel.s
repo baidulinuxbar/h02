@@ -18,14 +18,12 @@ SAFE_CHANGED	=	1
 	movl %eax,%ebx
 	pushl %esi
 	call init_kd
+	call ord_int
+	jmp .
 	call _in_main
 	jmp .
+
 .data
 .align 2
 stk:			.long	ESP_LEN,KS_SS
-
-#63*512=32256
-#.org	32252
-#.ascii	"ttyy"
-
 

@@ -13,6 +13,8 @@ char str[]="hello kernel!";
 #define _memcpy(s,d,len)	__asm__("movl %0,%%esi;movl %1,%%edi;rep movsb"::"p"(s),"p"(d),"c"(len):"eax","esi","edi");
 #define _memset(s,i,len)	__asm__("movl %0,%%edi;rep stosb"::"p"(s),"a"(i),"c"(len):"edi");
 #define _strlen(s)		({register int i;__asm__("movl $0x10001,%%ecx;movb $0,%%al;repne scasb;negw %%cx;movl %%ecx,%%eax":"=a"(i):"D"(s):"ecx");i;});
+
+
 //{{{void init_kd(BYTE *p)
 void init_kd(BYTE *p){
 	int i=48;
@@ -92,9 +94,10 @@ int _in_main(){
 	show_ax(kd.pos);
 	return 0;
 };//}}}
-
-
-
+//{{{int get_cnt()
+int get_cnt(){return kd.pos;};//}}}
+//{{{void set_cnt()
+void set_cnt(){kd.pos++;};//}}}
 
 
 
