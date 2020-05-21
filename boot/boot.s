@@ -458,4 +458,22 @@ gdt:	.word	0,0,0,0
 		.space	16,0
 .org	1020
 .ascii	"tian"
-
+/*Three methods of A20
+M1:
+movb $2,%al
+outb %al,$0x92			#enable a20
+movb $1,%al
+outb %al,$0x92			#fast reset
+M2:
+inb $0xee,%al			#enable a20
+outb %al,$0xee			#disable a20
+inb $0xef,%al			#fast reset
+M3:
+mov $0x2401,%ax
+int $0x15				#enable
+return:
+CF = clear if success
+AH = 0
+CF = set on error
+AH = status(01=keyboard controller is in secure mode,0x86=function not supported)
+*/
