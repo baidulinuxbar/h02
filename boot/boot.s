@@ -40,6 +40,7 @@ go:
 	pop %es
 	call setup_8253
 	call reset_8259a
+	call enable_a20
 	lgdt l_gdt
 	smsw %ax
 	or $1,%ax
@@ -48,6 +49,8 @@ go:
 
 stk:	.word	STK_OFF,STK_SEG,0
 _cursor_pos:	.word	0
+msg:	.ascii	"booting.........................................[ok]"
+len=.-msg
 
 //{{{cls	清屏函数
 /*传入参数：无
@@ -414,11 +417,38 @@ check_mem:
 3:	
 	ret
 //}}}
-
+//{{{enable_a20
+enable_a20:
+	xorb %al,%al
+1:
+	inb $0x64,%al
+	testb $2,%al
+	jnz 1b
+	movb $0xD0,%al
+	outb %al,$0x64
+2:
+	inb $0x64,%al
+	testb $1,%al
+	jz 2b
+	inb $0x60,%al
+	push %ax
+3:
+	inb $0x64,%al
+	testb $2,%al
+	jnz 3b
+	movb $0xD1,%al
+	outb %al,$0x64
+4:	
+	inb $0x64,%al
+	testb $2,%al
+	jnz 4b
+	pop %ax
+	orb $2,%al
+	outb %al,$0x60
+	ret
+//}}}
 err_msg:	.ascii "Physical memory require 8M at least"
 err_len = .-err_msg
-msg:	.ascii	"booting.........................................[ok]"
-len=.-msg
 l_gdt:	.word	47
 		.long	BOOTADDR+gdt
 gdt:	.word	0,0,0,0
